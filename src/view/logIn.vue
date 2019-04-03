@@ -1,19 +1,66 @@
 <template>
   <form class="login">
     <label class="username">
-      <input type="text" name="username" placeholder="请输入用户名">
+      <input type="text" name="username" v-model="username" placeholder="请输入用户名" maxlength="20">
     </label>
     <label class="password">
-      <input type="password" name="username" placeholder="请输入密码">
+      <input type="password" name="password" v-model="password" placeholder="请输入密码" maxlength="16">
     </label>
-    <button>登录</button>
+    <button @click="submitFun($event)">登录</button>
     <a href="tel:123456" class="forget">忘记密码</a>
-    <span class="register">注册</span>
+    <span class="register" @click="$router.push('/register')">注册</span>
   </form>
 </template>
 
 <script>
-export default {};
+import XHR from "@/api";
+import { Toast } from "mint-ui";
+export default {
+  data() {
+    return {
+      username: "",
+      password: ""
+    };
+  },
+  mounted() {
+    console.log(this.$router);
+  },
+  methods: {
+    submitFun(e) {
+      e.preventDefault();
+      if (this.password == "" || this.username == "") {
+        Toast({
+          message: "请输入正确的用户名和密码",
+          position: "top",
+          duration: 3000
+        });
+      }
+
+      if (this.submitFun.disabled) return;
+      this.submitFun.disabled = true;
+      XHR.userLogin({
+        username: this.username,
+        password: this.password
+      }).then(res => {
+        this.submitFun.disabled = false;
+        if (res.data.errno == 0) {
+          localStorage.setItem("UserTokenHas", res.data.data.token);
+          Toast({
+            message: "登录成功",
+            iconClass: "icon icon-success"
+          });
+          this.$router.go(-1);
+        } else {
+          Toast({
+            message: res.data.errmsg,
+            position: "top",
+            duration: 3000
+          });
+        }
+      });
+    }
+  }
+};
 </script>
 
 <style lang="less">

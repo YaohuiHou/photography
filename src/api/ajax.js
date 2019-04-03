@@ -1,6 +1,7 @@
 // require('es6-promise').polyfill();
 import axios from 'axios'
 import qs from 'qs'
+
 const fetch = ({
   url,
   body,
@@ -8,14 +9,27 @@ const fetch = ({
   config
 }) => {
   if (type === 'POST') {
-    return axios.post(url, qs.stringify(body))
+    // qs.stringify(body)
+    return axios.post(url, body, {
+      headers: {
+        "content-type": "application/json",
+        'User-Token': localStorage.getItem('UserTokenHas')
+      }
+    })
   } else if (type === 'GET') {
+    console.log(localStorage.getItem('UserTokenHas'));
+
     return axios.get(url, {
-      params: body
+      params: body,
+      headers: {
+        'User-Token': localStorage.getItem('UserTokenHas')
+      }
     })
   } else {
+    console.log(config);
+
     // 单独处理上传图片
-    return axios.post(url, body, config)
+    return axios.post(url, body)
   }
 }
 export default fetch
