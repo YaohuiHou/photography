@@ -1,5 +1,5 @@
 <template>
-  <div class="tags">
+  <div class="tags-view">
     <h3>职业标签</h3>
     <ul>
       <li
@@ -24,7 +24,12 @@ export default {
     };
   },
   mounted() {
-    this.getTypeList();
+    let tags = localStorage.getItem("TAGSList");
+    if (tags) {
+      this.tags = JSON.parse(tags);
+    } else {
+      this.getTypeList();
+    }
   },
   methods: {
     // 获取摄影分类
@@ -44,6 +49,7 @@ export default {
             return item;
           });
           this.tags = data;
+          localStorage.setItem("TAGSList", JSON.stringify(this.tags));
         }
       });
     },
@@ -61,7 +67,7 @@ export default {
 </script>
 
 <style lang="less">
-.tags {
+.tags-view {
   position: fixed;
   left: 0;
   top: 0;

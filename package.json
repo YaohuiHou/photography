@@ -10,10 +10,11 @@
     "unit": "jest --config test/unit/jest.conf.js --coverage",
     "e2e": "node test/e2e/runner.js",
     "test": "npm run unit && npm run e2e",
-    "build": "node build/build.js"
+    "build": "cross-env NODE_ENV=production env_config=prod node build/build.js"
   },
   "dependencies": {
     "axios": "^0.18.0",
+    "cross-env": "^5.2.0",
     "less": "^3.9.0",
     "less-loader": "^4.1.0",
     "mint-ui": "^2.2.13",

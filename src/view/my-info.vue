@@ -3,6 +3,14 @@
     <header>
       <figure>
         <img :src="avatar" alt>
+        <span>修改</span>
+        <input
+          @change="addImgFun"
+          type="file"
+          name="Filedata"
+          class="upimg"
+          accept="image/gif, image/jpeg, image/jpg, image/png"
+        >
       </figure>
     </header>
     <ul class="info">
@@ -12,8 +20,8 @@
       </li>
       <li class="city" @click="cityShow = !cityShow">
         <span>地址：</span>
-        <em>{{cityName}}</em>
-        <i v-if="cityName == ''">请选择您所在的城市地址</i>
+        <em>{{zoons}}</em>
+        <i v-if="zoons == ''">请选择您所在的城市地址</i>
       </li>
       <li @click="tagShow = !tagShow" class="tag-item">
         <span>职业标签：</span>
@@ -28,7 +36,13 @@
       </li>
       <li>
         <span>手机号：</span>
-        <input type="tel" placeholder="请输入手机号" maxlength="11" v-model="mobile">
+        <input
+          type="tel"
+          placeholder="请输入手机号"
+          maxlength="11"
+          v-model="mobile"
+          :class="mobileShow ? 'selected' : ''"
+        >
         <mt-switch v-model="mobileShow"></mt-switch>
       </li>
     </ul>
@@ -44,13 +58,13 @@
 
 <script>
 import XHR from "@/api";
+import { Toast } from "mint-ui";
 import tagView from "../components/tagView.vue";
 import cityView from "../components/cityView.vue";
 export default {
   components: { tagView, cityView },
   data() {
     return {
-      cityName: "",
       cityShow: false,
       tagsObjLength: 0,
       tagsObj: {},
@@ -63,10 +77,19 @@ export default {
       areaId: "",
       mobileShow: false,
       tag: "",
-      content: ""
+      content: "",
+      zoons: "",
+      // 图片添加
+      addImg: false,
+      addImgUrl: "",
+      upImgShow: false
     };
   },
   mounted() {
+    let tags = localStorage.getItem("TAGSList");
+    if (tags) {
+      this.tags = JSON.parse(tags);
+    }
     this.getUserAllInfo();
   },
   methods: {
@@ -84,6 +107,20 @@ export default {
           this.provinceId = data.provinceId;
           this.cityId = data.cityId;
           this.areaId = data.areaId;
+
+          if (this.provinceId) {
+            this.zoons =
+              data.provinceName + "-" + data.cityName + "-" + data.areaName;
+          }
+          this.tag.split(",").forEach(ele => {
+            this.tags.forEach((item, index) => {
+              if (item.valueId == ele) {
+                item.selected = true;
+                this.$set(this.tagsObj, index, item);
+                // this.tagsObj[index] = item;
+              }
+            });
+          });
         }
       });
     },
@@ -95,9 +132,10 @@ export default {
       this.cityShow = n;
     },
     changeCityFun(o) {
-      this.cityId = o.id;
-      this.provinceId = o.pid;
-      this.cityName = o.name;
+      this.cityId = o[1].id;
+      this.provinceId = o[0].id;
+      this.areaId = o[2].id;
+      this.zoons = o[0].name + "-" + o[1].name + "-" + o[2].name;
     },
     // 提交tag
     tagsObjFun(o) {
@@ -120,13 +158,56 @@ export default {
         provinceId: this.provinceId,
         cityId: this.cityId,
         areaId: this.areaId,
-        mobileShow: this.mobileShow,
+        mobileShow: this.mobileShow ? 1 : 0,
         tag: this.tag,
         content: this.content
       };
       XHR.editUserInfo(obj).then(res => {
         if (res.data.errno == 0) {
-          console.log(res.data);
+          Toast({
+            message: "修改成功",
+            iconClass: "icon icon-success"
+          });
+        }
+      });
+    },
+    // 上传图片
+    addImgFun(event) {
+      if (this.upImgShow) return;
+      this.upImgShow = true;
+      var file = event.target.files[0];
+      var reader = new FileReader();
+      var formData = new FormData();
+      let _this = this;
+
+      if (!file.type) {
+        var regexp = fileName.match(/\.\w+$/);
+        if (regexp && (regexp = regexp[0]))
+          file.type = this.mimeTypes[(regexp + "").toLowerCase()];
+      }
+      // 判断图片不能大于8M
+      if (file.size >= 8388608) {
+        alert("\u6240\u9009\u56fe\u7247\u4e0d\u80fd\u5927\u4e8e8MB"); //所选图片不能大于8MB
+        this.upImgShow = false;
+        return;
+      }
+      // 生成base64
+      reader.onload = function(res) {
+        _this.addImgUrl = this.result;
+        _this.addImg = true;
+        // _this.$set('themeValues','themeImg',this.result)
+      };
+
+      reader.readAsDataURL(file);
+      formData.append("file", file);
+
+      XHR.UploadImg(formData).then(res => {
+        // 赋值图片路径 并且创建预览
+        this.upImgShow = false;
+        console.log(res.data.data.url);
+
+        if (res.data.errno == 0) {
+          this.avatar = res.data.data.url;
         }
       });
     }
@@ -152,6 +233,29 @@ export default {
       border: 1px solid #eee;
       overflow: hidden;
       margin-right: 20px;
+      position: relative;
+      span {
+        position: absolute;
+        right: 0;
+        top: 0;
+        width: 30px;
+        height: 20px;
+        line-height: 20px;
+        text-align: center;
+        color: #fff;
+        font-size: 12px;
+        background: #000;
+        opacity: 0.5;
+      }
+      input {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        z-index: 2;
+      }
       img {
         width: 100%;
         height: 100%;

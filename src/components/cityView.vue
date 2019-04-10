@@ -1,16 +1,21 @@
 <template>
-  <div class="tags">
+  <div class="citys-view">
     <h3>选择省市</h3>
     <ul>
       <li v-for="(item,index) in province" :key="index">
         <span @click="getCity(index)">{{item.name}}</span>
         <div class="city" v-if="item.selected">
-          <em
-            v-for="(city,i) in citys[activeSelected]"
-            :key="i"
-            :class="city.selected ? 'selected' : '1'"
-            @click="changeCity(i)"
-          >{{city.name}}</em>
+          <div v-for="(city,i) in citys[activeSelected]" :key="i" class="em" @click="changeCity(i)">
+            <em @click="getArea(index,i)">{{city.name}}</em>
+            <ol v-if="selectMe == i">
+              <li
+                v-for="(area,e) in areas"
+                :key="e"
+                :class="area.selected ? 'selected' : ''"
+                @click="changeArea(e)"
+              >{{area.name}}</li>
+            </ol>
+          </div>
           <mt-spinner color="#26a2ff" type="fading-circle" v-if="!citys[activeSelected]"></mt-spinner>
         </div>
       </li>
@@ -25,11 +30,15 @@ export default {
   props: [],
   data() {
     return {
+      selectMe: "",
       province: [],
       citys: [],
       nextSelected: -1,
       activeSelected: -1,
-      selectCity: []
+      selectCity: [],
+      areas: [],
+      atCitySelected: 0,
+      submitData: []
     };
   },
   mounted() {
@@ -52,6 +61,8 @@ export default {
     // 获取城市
     getCity(index) {
       let item = this.province[index];
+      this.submitData[0] = item;
+
       this.activeSelected = index;
       this.province[this.activeSelected].selected = true;
       if (this.nextSelected != -1) {
@@ -69,6 +80,23 @@ export default {
         }
       });
     },
+    getArea(index, i) {
+      let item = this.citys[this.activeSelected][i];
+      this.selectMe = i;
+      this.submitData[1] = item;
+
+      // this.citys[this.activeSelected][i].selected = true;
+      XHR.getCityList({ pid: item.id }).then(res => {
+        if (res.data.errno == 0) {
+          let areas = res.data.data;
+          areas.map(item => {
+            item.selected = false;
+            return item;
+          });
+          this.areas = areas;
+        }
+      });
+    },
     // 选中城市
     changeCity(i) {
       this.citys[this.activeSelected][i].selected = true;
@@ -77,7 +105,21 @@ export default {
       }
       this.selectCity = [this.activeSelected, i];
 
-      this.$emit("changeCityFun", this.citys[this.activeSelected][i]);
+      this.atCitySelected = i;
+      // this.$emit("changeCityFun", this.citys[this.activeSelected][i]);
+      // this.cityShowFun();
+    },
+    // 选中县
+    changeArea(i) {
+      this.areas.forEach((e, n) => {
+        e.selected = false;
+        if (n == i) {
+          e.selected = true;
+        }
+      });
+      this.submitData[2] = this.areas[i];
+
+      this.$emit("changeCityFun", this.submitData);
       this.cityShowFun();
     },
     cityShowFun() {
@@ -88,7 +130,7 @@ export default {
 </script>
 
 <style lang="less">
-.tags {
+.citys-view {
   position: fixed;
   left: 0;
   top: 0;
@@ -106,7 +148,7 @@ export default {
     position: absolute;
     right: 0;
     top: 0;
-    width: calc(~"100% - 90px");
+    width: calc(~"100% - 60px");
     height: 50px;
     line-height: 50px;
     text-align: center;
@@ -117,11 +159,11 @@ export default {
     background: #fff;
     border-bottom: 1px solid #eee;
   }
-  ul {
+  > ul {
     position: absolute;
     right: 0;
     top: 0;
-    width: calc(~"100% - 90px");
+    width: calc(~"100% - 60px");
     height: 100vh;
     overflow: auto;
     background: #fff;
@@ -129,7 +171,7 @@ export default {
     box-shadow: 1px 1px 100px 4px rgba(0, 0, 0, 0.7);
     box-sizing: border-box;
     padding: 50px 20px 0;
-    li {
+    > li {
       line-height: 45px;
       padding-left: 10px;
       font-size: 14px;
@@ -141,7 +183,7 @@ export default {
       .city {
         border-bottom: 1px solid #eee;
         padding-left: 20px;
-        em {
+        .em {
           display: block;
           line-height: 45px;
           font-size: 14px;
@@ -151,6 +193,10 @@ export default {
             color: #26a2ff;
             font-size: 16px;
             font-weight: bold;
+          }
+          ol {
+            padding-left: 20px;
+            background: #f5f5f5;
           }
           &:last-child {
             border: none;

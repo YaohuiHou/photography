@@ -34,6 +34,7 @@ export default {
       XHR.getUsersList().then(res => {
         if (res.data.errno == 0) {
           this.list = res.data.data.items;
+          console.log(this.list);
         }
       });
     }
