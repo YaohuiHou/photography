@@ -1,5 +1,6 @@
 <template>
   <form class="my-info">
+    <headView fixed="1" title="我的个人信息"></headView>
     <header>
       <figure>
         <img :src="avatar" alt>
@@ -61,8 +62,9 @@ import XHR from "@/api";
 import { Toast } from "mint-ui";
 import tagView from "../components/tagView.vue";
 import cityView from "../components/cityView.vue";
+import headView from "../components/headView.vue";
 export default {
-  components: { tagView, cityView },
+  components: { headView, tagView, cityView },
   data() {
     return {
       cityShow: false,
@@ -226,6 +228,7 @@ export default {
     background: #fff;
     position: relative;
     margin-bottom: 10px;
+    margin-top: 45px;
     figure {
       width: 80px;
       height: 80px;

@@ -1,5 +1,6 @@
 <template>
   <div class="equipment">
+    <headView fixed="1" title="我的租赁信息"></headView>
     <h2>我的器材：</h2>
     <p>作品集合是体现自己摄影技术的表现，最多只能上传6张美图。</p>
     <photoList :photos="photos" :size="6" @updataImgFun="updataImg" @removeImg="removeImg"></photoList>
@@ -18,8 +19,9 @@
 import XHR from "@/api";
 import { Toast } from "mint-ui";
 import photoList from "../components/photoList.vue";
+import headView from "../components/headView.vue";
 export default {
-  components: { photoList },
+  components: { headView, photoList },
   data() {
     return {
       photos: [],
@@ -81,7 +83,7 @@ export default {
 
 <style lang="less" scoped>
 .equipment {
-  padding: 20px 10px 40px;
+  padding: 60px 10px 40px;
   h2 {
     line-height: 30px;
     color: #333;

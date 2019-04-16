@@ -163,7 +163,6 @@ class XHR {
         type: 'GET'
       })
     }
-    // comment/mylist?otherUser=31
     // 获取详情页中的留言列表
   getmyComment(json) {
     return fetch({

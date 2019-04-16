@@ -1,36 +1,71 @@
 <template>
   <div class="message">
-    <!-- <header>
-      <span :class="[selected?'':'selected']" @click="selected = false">回复</span>
-      <span :class="[selected?'selected':'']" @click="selected = true">留言</span>
-    </header>-->
+    <headView fixed="1" title="我的留言页"></headView>
     <div class="list">
       <div class="list1">
         <ul
-          v-infinite-scroll="loadMore1"
+          v-infinite-scroll="getComment"
           infinite-scroll-disabled="loading"
           infinite-scroll-distance="10"
         >
-          <li v-for="i in 20">{{i}}</li>
+          <li v-for="(item,index) in messages" :key="index" @click="gotoLink(item.toId)">
+            <p>{{item.content}}</p>
+            <span>{{item.addTime}}</span>
+          </li>
         </ul>
+      </div>
+      <div class="nothing" v-show="messages.length <= 0">
+        <span>零</span>
+        <p>没有发现任何东西~</p>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import XHR from "@/api";
+import headView from "../components/headView.vue";
 export default {
+  components: { headView },
   data() {
     return {
-      selected: false
+      selected: false,
+      messages: [],
+      page: 1,
+      total: 10
     };
   },
   mounted() {
-    this.loadMore();
+    this.$store.commit("isLogin", true);
+    this.getComment();
   },
   methods: {
-    loadMore() {
-      console.log(213);
+    gotoLink(id) {
+      this.$router.push({ path: "/detail", query: { id: id } });
+    },
+    // 获取留言列表
+    getComment() {
+      if (this.page > 1) {
+        if (this.page * 10 >= this.total) return;
+      }
+      if (this.getComment.disable) return;
+      this.getComment.disable = true;
+      XHR.getComment({
+        page: 1,
+        limit: 10
+      }).then(res => {
+        this.getComment.disable = false;
+        if (res.data.errno == 0) {
+          if (this.page == 1) {
+            this.messages = res.data.data.data;
+          } else {
+            this.messages = [...this.messages, ...res.data.data.data];
+          }
+
+          this.total = res.data.data.total;
+          this.page += 1;
+        }
+      });
     }
   }
 };
@@ -41,54 +76,67 @@ export default {
   position: relative;
   width: 100%;
   overflow: hidden;
-  header {
-    background: #fff;
-    height: 45px;
-    display: flex;
-    flex-direction: row;
-    span {
-      flex: 1;
-      text-align: center;
-      line-height: 45px;
-      color: #333;
-      font-size: 14px;
-      &.selected {
-        background: #26a2ff;
-        color: #fff;
-      }
-      &:last-child {
-        border-left: 1px solid #eee;
-      }
-    }
-  }
   .list {
     display: flex;
     flex-direction: row;
     transition: all 0.6s;
-    &.l1 {
-      transform: translate3d(0, 0, 0);
-    }
-    &.l2 {
-      transform: translate3d(-50%, 0, 0);
-    }
-    .list1,
-    .list2 {
+    padding-top: 45px;
+    .list1 {
       width: 100%;
       overflow-x: hidden;
       overflow-y: auto;
     }
     ul {
       width: 100%;
-      padding: 0 15px;
+      padding: 10px 15px;
       box-sizing: border-box;
       li {
-        height: 80px;
+        min-height: 80px;
+        padding: 15px 20px;
         background: #fff;
-        margin-top: 14px;
+        margin-bottom: 14px;
         border-radius: 4px;
+        box-sizing: border-box;
         box-shadow: 0px 0px 10px 1px rgba(0, 0, 0, 0.2);
+        p {
+          line-height: 24px;
+          font-size: 14px;
+          color: #666;
+          max-height: 48px;
+          text-overflow: ellipsis;
+          overflow: hidden;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+          margin-bottom: 10px;
+        }
+        span {
+          display: block;
+          line-height: 24px;
+          font-size: 12px;
+          text-align: right;
+          color: #999;
+        }
       }
     }
+  }
+}
+.nothing {
+  padding-top: 120px;
+  span {
+    font-family: "photo font";
+    display: block;
+    line-height: 60px;
+    text-align: center;
+    font-size: 60px;
+    color: #999;
+  }
+  p {
+    padding-top: 20px;
+    line-height: 24px;
+    font-size: 16px;
+    color: #999;
+    text-align: center;
   }
 }
 </style>

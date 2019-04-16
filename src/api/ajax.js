@@ -17,8 +17,6 @@ const fetch = ({
       }
     })
   } else if (type === 'GET') {
-    console.log(localStorage.getItem('UserTokenHas'));
-
     return axios.get(url, {
       params: body,
       headers: {
@@ -26,8 +24,6 @@ const fetch = ({
       }
     })
   } else {
-    console.log(config);
-
     // 单独处理上传图片
     return axios.post(url, body)
   }

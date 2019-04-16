@@ -1,5 +1,6 @@
 <template>
   <div class="my-mall">
+    <headView fixed="1" title="我的商城信息"></headView>
     <h2>我的商城：</h2>
     <p>作品集合是体现自己摄影技术的表现，最多只能上传1张美图。</p>
     <photoList :photos="photos" :size="1" @updataImgFun="updataImg" @removeImg="removeImg"></photoList>
@@ -21,8 +22,9 @@
 import XHR from "@/api";
 import { Toast } from "mint-ui";
 import photoList from "../components/photoList.vue";
+import headView from "../components/headView.vue";
 export default {
-  components: { photoList },
+  components: { headView, photoList },
   data() {
     return {
       photos: [],
@@ -95,7 +97,7 @@ export default {
 
 <style lang="less" scoped>
 .my-mall {
-  padding: 20px 10px 40px;
+  padding: 60px 10px 40px;
   h2 {
     line-height: 30px;
     color: #333;

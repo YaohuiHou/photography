@@ -1,6 +1,6 @@
 <template>
   <div class="detail" v-show="dataInfo">
-    <headView title="详情页"></headView>
+    <headView fixed title="详情页"></headView>
     <div class="header" v-if="dataInfo.info">
       <figure>
         <img :src="dataInfo.info.avatar" alt>
@@ -57,8 +57,32 @@
           :class="item.fromId == mineId ? 'right' : 'left'"
           @click="gotoComment(item.fromId)"
         >
-          <p>{{item.content}}</p>
-          <span>{{item.addTime}}</span>
+          <div v-if="item.fromId != mineId">
+            <figure>
+              <img :src="item.fromInfo.avatar">
+            </figure>
+            <div class="info">
+              <em>{{item.fromInfo.username}}</em>
+              <p>
+                <i>回复@{{item.toInfo.username}}：</i>
+                {{item.content}}
+              </p>
+              <span>{{item.addTime}}</span>
+            </div>
+          </div>
+          <div v-if="item.fromId == mineId">
+            <div class="info">
+              <em>{{item.fromInfo.username}}</em>
+              <p>
+                <i>回复@{{item.toInfo.username}}：</i>
+                {{item.content}}
+              </p>
+              <span>{{item.addTime}}</span>
+            </div>
+            <figure>
+              <img :src="item.fromInfo.avatar">
+            </figure>
+          </div>
         </li>
       </ul>
       <div class="nothing" v-else @click="gotoComment">
@@ -96,14 +120,7 @@ export default {
       tagsObj: {},
       toastShow: false,
       dataInfo: {},
-      messages: [],
-      worksInfos: [
-        "http://fes.qyerstatic.com/Fm978lERTjkvzeID3IGxI249BKTn?imageslim",
-        "http://fes.qyerstatic.com/Fhq5aV-3hV7TvvXEsspccWTtxcYj?imageslim",
-        "http://fes.qyerstatic.com/Fhq5aV-3hV7TvvXEsspccWTtxcYj?imageslim",
-        "http://fes.qyerstatic.com/Fhq5aV-3hV7TvvXEsspccWTtxcYj?imageslim",
-        "http://fes.qyerstatic.com/Fm978lERTjkvzeID3IGxI249BKTn?imageslim"
-      ]
+      messages: []
     };
   },
   mounted() {
@@ -203,7 +220,6 @@ export default {
       if (this.userComment.disable) return;
       this.userComment.disable = true;
       let toId = this.toId == 0 ? this.userId : this.toId;
-      console.log(toId);
 
       XHR.userComment({
         toId: this.userId,
@@ -493,41 +509,87 @@ export default {
       font-size: 12px;
       color: #666;
       line-height: 20px;
-      margin-bottom: 10px;
+      margin-bottom: 20px;
     }
     ul {
       overflow: hidden;
       li {
         background: #fff;
         border-radius: 8px;
-        margin-bottom: 20px;
+        margin-bottom: 10px;
         padding: 10px;
         overflow: hidden;
-        p {
-          line-height: 24px;
-          font-size: 14px;
-          margin-bottom: 5px;
+        > div {
+          display: flex;
+          flex-direction: row;
         }
-        span {
-          font-size: 12px;
-          color: #999;
+        figure {
+          width: 50px;
+          height: 50px;
+          overflow: hidden;
+          border-radius: 50%;
+          flex-shrink: 0;
+          img {
+            width: 100%;
+            height: 100%;
+            -webkit-object-fit: cover;
+            object-fit: cover;
+            display: block;
+          }
+        }
+        .info {
+          width: 100%;
+          em {
+            font-size: 14px;
+            line-height: 20px;
+            color: #333;
+            display: block;
+            margin-bottom: 5px;
+          }
+          span {
+            font-size: 10px;
+            line-height: 18px;
+            color: #999;
+            display: block;
+            text-align: right;
+          }
+          p {
+            line-height: 24px;
+            font-size: 14px;
+            margin-bottom: 5px;
+            i {
+              opacity: 0.7;
+            }
+          }
         }
         &.left {
-          width: 80%;
+          width: 86%;
           box-sizing: border-box;
           float: left;
+          figure {
+            margin-right: 10px;
+          }
         }
         &.right {
-          width: 80%;
+          width: 86%;
           box-sizing: border-box;
           float: right;
           background: rgba(63, 158, 255, 0.7);
-          p {
-            color: #fff;
+          figure {
+            margin-left: 10px;
           }
-          span {
-            float: right;
-            color: #f5f5f5;
+          .info {
+            em {
+              color: #fff;
+              text-align: right;
+            }
+            p {
+              color: #fff;
+            }
+            span {
+              color: #f5f5f5;
+              text-align: left;
+            }
           }
         }
       }
