@@ -207,7 +207,7 @@ export default {
 
       XHR.userComment({
         toId: this.userId,
-        topicid: this.userId,
+        topicId: this.userId,
         content: this.textContent
       }).then(res => {
         this.userComment.disable = false;
@@ -224,8 +224,6 @@ export default {
     },
     // 提问
     gotoComment(toId) {
-      console.log(toId);
-
       if (localStorage.getItem("UserTokenHas")) {
         this.toastShow = true;
         this.toId = toId ? toId : 0;
