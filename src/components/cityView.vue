@@ -2,11 +2,17 @@
   <div class="citys-view">
     <h3>选择省市</h3>
     <ul>
+      <li v-if="type == 'home'">
+        <span @click="activeAll" :class="activeSelect ? 'selected' : ''">全部</span>
+      </li>
       <li v-for="(item,index) in province" :key="index">
-        <span @click="getCity(index)">{{item.name}}</span>
+        <span
+          @click="getCity(index)"
+          :class="activeSelected == index ? 'selected' : ''"
+        >{{item.name}}</span>
         <div class="city" v-if="item.selected">
           <div v-for="(city,i) in citys[activeSelected]" :key="i" class="em" @click="changeCity(i)">
-            <em @click="getArea(index,i)">{{city.name}}</em>
+            <em @click="getArea(index,i)" :class="selectMe == i ? 'selected' : ''">{{city.name}}</em>
             <ol v-if="selectMe == i">
               <li
                 v-for="(area,e) in areas"
@@ -20,6 +26,7 @@
         </div>
       </li>
     </ul>
+    <div v-if="type == 'home'" class="changeZoon" @click="changeZoon">确认</div>
     <i @click="cityShowFun"></i>
   </div>
 </template>
@@ -27,10 +34,11 @@
 <script>
 import XHR from "@/api";
 export default {
-  props: [],
+  props: ["type"],
   data() {
     return {
-      selectMe: "",
+      activeSelect: false,
+      selectMe: -1,
       province: [],
       citys: [],
       nextSelected: -1,
@@ -45,6 +53,15 @@ export default {
     this.getCityList();
   },
   methods: {
+    activeAll() {
+      this.activeSelect = !this.activeSelect;
+      this.submitData = [{ id: "", name: "位置" }];
+      this.province[this.nextSelected].selected = false;
+      if (this.activeSelect) {
+        this.activeSelected = -1;
+        this.selectMe = -1;
+      }
+    },
     // 获取省份
     getCityList() {
       XHR.getCityList({ pid: 0 }).then(res => {
@@ -64,9 +81,12 @@ export default {
       this.submitData[0] = item;
 
       this.activeSelected = index;
+      this.activeSelect = false;
       this.province[this.activeSelected].selected = true;
       if (this.nextSelected != -1) {
         this.province[this.nextSelected].selected = false;
+        // this.activeSelected = -1;
+        this.selectMe = -1;
       }
       this.nextSelected = this.activeSelected;
       XHR.getCityList({ pid: item.id }).then(res => {
@@ -124,6 +144,10 @@ export default {
     },
     cityShowFun() {
       this.$emit("cityShowF", false);
+    },
+    changeZoon() {
+      this.$emit("changeCityFun", this.submitData);
+      this.cityShowFun();
     }
   }
 };
@@ -170,7 +194,7 @@ export default {
     z-index: 1;
     box-shadow: 1px 1px 100px 4px rgba(0, 0, 0, 0.7);
     box-sizing: border-box;
-    padding: 50px 20px 0;
+    padding: 50px 20px 45px;
     > li {
       line-height: 45px;
       padding-left: 10px;
@@ -189,6 +213,11 @@ export default {
           font-size: 14px;
           color: #666;
           border-bottom: 1px solid #eee;
+          em {
+            display: block;
+            line-height: 45px;
+            font-size: 14px;
+          }
           &.selected {
             color: #26a2ff;
             font-size: 16px;
@@ -203,27 +232,40 @@ export default {
           }
         }
       }
-      &.selected {
-        color: #26a2ff;
-        font-size: 16px;
-        position: relative;
-        font-weight: bold;
-        &:after {
-          content: "\52fe";
-          font-family: "photo font";
-          position: absolute;
-          right: 0;
-          top: 0;
-          width: 45px;
-          height: 45px;
-          line-height: 45px;
-          text-align: center;
-          font-size: 12px;
-          color: #26a2ff;
-          font-weight: 300;
-        }
-      }
     }
+  }
+  .selected {
+    color: #26a2ff;
+    font-size: 16px;
+    position: relative;
+    font-weight: bold;
+    &:after {
+      content: "\52fe";
+      font-family: "photo font";
+      position: absolute;
+      right: 0;
+      top: 0;
+      width: 45px;
+      height: 45px;
+      line-height: 45px;
+      text-align: center;
+      font-size: 12px;
+      color: #26a2ff;
+      font-weight: 300;
+    }
+  }
+  .changeZoon {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    width: calc(~"100% - 60px");
+    height: 45px;
+    color: #fff;
+    font-size: 14px;
+    line-height: 45px;
+    text-align: center;
+    background: rgba(63, 158, 255, 0.95);
+    z-index: 4;
   }
 }
 .mint-spinner-fading-circle {

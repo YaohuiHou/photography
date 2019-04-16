@@ -83,6 +83,7 @@ export default {
             message: "注册成功",
             iconClass: "icon icon-success"
           });
+          this.$store.commit("isLogin", true);
           this.$router.go(-1);
         } else {
           Toast({
@@ -97,7 +98,7 @@ export default {
 };
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 .registered {
   position: relative;
   height: 100vh;

@@ -93,7 +93,7 @@ export default {
 };
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 .my-mall {
   padding: 20px 10px 40px;
   h2 {

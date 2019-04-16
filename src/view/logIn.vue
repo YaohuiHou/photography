@@ -49,6 +49,7 @@ export default {
             message: "登录成功",
             iconClass: "icon icon-success"
           });
+          this.$store.commit("isLogin", true);
           this.$router.go(-1);
         } else {
           Toast({

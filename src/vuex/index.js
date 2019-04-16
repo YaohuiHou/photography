@@ -1,18 +1,42 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import router from '../router'
+import XHR from '../api'
 Vue.use(Vuex)
 
 const store = new Vuex.Store({
   state: {
     isLogin: false,
+    userInfo: {}
   },
   // 事件
   mutations: {
     // 调用
     // store.commit('isLogin', 10)
-    isLogin(state) {
-      console.log(state);
+    isLogin(state, type) {
+      if (type) {
+        XHR.getUserAllInfo().then(res => {
+          if (res.data.errno == 0) {
+            let data = res.data.data;
+            state.userInfo = data
+            state.isLogin = true;
+          } else {
+            state.isLogin = false;
+            localStorage.removeItem("UserTokenHas")
+          }
+        })
+      } else {
+        state.userInfo = {}
+      }
+    },
+    gotoLogin(state) {
+      XHR.getUserInfo().then(res => {
+        if (res.data.errno == 0) {
+          state.isLogin = true;
+        } else {
+          state.isLogin = false;
+          localStorage.removeItem("UserTokenHas")
+        }
+      });
     }
   },
   actions: {

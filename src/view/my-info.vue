@@ -215,7 +215,7 @@ export default {
 };
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 .my-info {
   header {
     display: flex;
@@ -259,6 +259,9 @@ export default {
       img {
         width: 100%;
         height: 100%;
+        -webkit-object-fit: cover;
+        object-fit: cover;
+        display: block;
       }
     }
   }

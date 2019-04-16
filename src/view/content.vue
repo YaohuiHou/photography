@@ -13,7 +13,7 @@
       <li v-for="(item,index) in routes" @click="outLink(index)" :key="index">{{item.name}}</li>
       <li @click="outLogin" v-show="logout">退出</li>
     </ul>
-    <footerView></footerView>
+    <footerView :selected="'mine'"></footerView>
   </div>
 </template>
 
@@ -79,6 +79,7 @@ export default {
       XHR.outLogin({ token: localStorage.getItem("UserTokenHas") }).then(
         res => {
           localStorage.removeItem("UserTokenHas");
+          this.$store.commit("isLogin", false);
           window.location.reload();
         }
       );
@@ -87,7 +88,7 @@ export default {
 };
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 .content-view {
   header {
     display: flex;
@@ -111,6 +112,9 @@ export default {
       img {
         width: 100%;
         height: 100%;
+        -webkit-object-fit: cover;
+        object-fit: cover;
+        display: block;
       }
     }
     span {

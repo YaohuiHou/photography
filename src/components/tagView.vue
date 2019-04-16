@@ -5,7 +5,7 @@
       <li
         v-for="(item,index) in tags"
         :key="index"
-        :class="item.selected ? 'selected' : '1'"
+        :class="item.selected ? 'selected' : ''"
         @click="tagsFun(index)"
       >{{item.name}}</li>
     </ul>

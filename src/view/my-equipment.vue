@@ -79,7 +79,7 @@ export default {
 };
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 .equipment {
   padding: 20px 10px 40px;
   h2 {

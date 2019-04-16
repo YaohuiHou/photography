@@ -146,5 +146,31 @@ class XHR {
     })
   }
 
+  // 留言
+  userComment(json) {
+    return fetch({
+      url: `${URLS}comment/post`,
+      body: json,
+      type: 'POST'
+    })
+  }
+
+  // 获取留言列表
+  getComment(json) {
+      return fetch({
+        url: `${URLS}comment/list`,
+        body: json,
+        type: 'GET'
+      })
+    }
+    // comment/mylist?otherUser=31
+    // 获取详情页中的留言列表
+  getmyComment(json) {
+    return fetch({
+      url: `${URLS}comment/mylist`,
+      body: json,
+      type: 'GET'
+    })
+  }
 }
 export default new XHR()

@@ -1,10 +1,6 @@
 <template>
-  <div class="item">
-    <img
-      class="bg"
-      :src="useritem.collection ? useritem.collection : collection[parseInt(Math.random()*2)]"
-      alt
-    >
+  <div class="item" @click="gotoLink(useritem.id)">
+    <img class="bg" :src="useritem.collection ? useritem.collection : collection">
     <header>
       <figure>
         <img :src="useritem.avatar" alt>
@@ -33,11 +29,13 @@ export default {
   props: ["useritem"],
   data() {
     return {
-      collection: [
-        "//fes.qyerstatic.com/FsgWAf3-MV_UmCNga0GS7Q_TXEiM?imageslim",
-        "//fes.qyerstatic.com/FvEqmQUOZC1_LdTpNif-0PKXtQAY?imageslim"
-      ]
+      collection: "//fes.qyerstatic.com/FsgWAf3-MV_UmCNga0GS7Q_TXEiM?imageslim"
     };
+  },
+  methods: {
+    gotoLink(id) {
+      this.$router.push({ path: "/detail", query: { id: id } });
+    }
   }
 };
 </script>
@@ -152,6 +150,7 @@ export default {
         font-size: 18px;
         color: #fff;
         margin-left: 15px;
+        text-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
       }
     }
   }
