@@ -7,6 +7,10 @@
       >{{zoons == '' ? '位置' : zoons}}</span>
       <span @click="selectedFun(1)" :class="selected2 ? 'selected' : ''">租赁</span>
       <span @click="selectedFun(2)" :class="selected3 ? 'selected' : ''">商城</span>
+      <span
+        @click="selectedFun(3)"
+        :class="selected4 ? 'selected' : ''"
+      >{{tagName == '' ? '分类' : tagName}}</span>
     </header>
     <div
       class="list"
@@ -28,6 +32,9 @@
         v-show="cityShow"
       ></cityView>
     </transition>
+    <transition name="left">
+      <tagView @tagShowF="tagShowFun" @tagsObjFun="tagsObjFun" v-show="tagShow" :type="'home'"></tagView>
+    </transition>
     <footerView :selected="'hall'"></footerView>
   </div>
 </template>
@@ -37,10 +44,14 @@ import XHR from "@/api";
 import listItem from "../components/listItem.vue";
 import cityView from "../components/cityView.vue";
 import footerView from "../components/footerView.vue";
+import tagView from "../components/tagView.vue";
 export default {
-  components: { listItem, cityView, footerView },
+  components: { listItem, cityView, footerView, tagView },
   data() {
     return {
+      tagsObj: {},
+      tagShow: false,
+      tagName: "",
       zoons: "",
       cityShow: false,
       page: 1,
@@ -48,6 +59,7 @@ export default {
       selected1: false,
       selected2: false,
       selected3: false,
+      selected4: false,
       list: [],
       formData: {
         page: 1
@@ -56,6 +68,12 @@ export default {
   },
   mounted() {
     this.loadMore();
+    let tags = localStorage.getItem("TAGSList");
+    if (tags) {
+      this.tags = JSON.parse(tags);
+    } else {
+      this.getTypeList();
+    }
   },
   methods: {
     selectedFun(n) {
@@ -73,6 +91,10 @@ export default {
           // 商城
           this.selected3 = !this.selected3;
           this.formData.isStore = this.selected3 ? 1 : 0;
+          break;
+        case 3:
+          // 商城
+          this.tagShow = !this.tagShow;
           break;
       }
       this.loadMore();
@@ -112,6 +134,19 @@ export default {
         }
       });
     },
+    // 显示tag
+    tagShowFun(n) {
+      this.tagShow = n;
+    },
+    // 提交tag
+    tagsObjFun(o) {
+      this.formData.type = o.valueId;
+      this.tagName = o.name;
+      this.selected4 = true;
+      this.page = 1;
+
+      this.loadMore();
+    },
     cityShowFun(n) {
       this.cityShow = n;
     },
@@ -119,9 +154,13 @@ export default {
       this.page = 1;
       let arr = ["province", "city", "area"];
       let zoons = [];
-      o.forEach((item, index) => {
-        this.formData[arr[index]] = item.id;
-        zoons.push(item.name);
+      arr.forEach((item, index) => {
+        if (o[index]) {
+          this.formData[item] = o[index].id;
+          zoons.push(o[index].name);
+        } else {
+          this.formData[item] = "";
+        }
       });
       this.zoons = zoons.join("-");
       this.selected1 = !this.selected1;
@@ -160,6 +199,9 @@ export default {
       }
       &:first-child {
         border: none;
+      }
+      &:first-child,
+      &:last-child {
         position: relative;
         overflow: hidden;
         &:after {

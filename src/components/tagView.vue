@@ -3,12 +3,18 @@
     <h3>职业标签</h3>
     <ul>
       <li
+        @click="activeAll"
+        :class="activeSelected == -1 ? 'selected' : ''"
+        v-if="type == 'home'"
+      >全部</li>
+      <li
         v-for="(item,index) in tags"
         :key="index"
         :class="item.selected ? 'selected' : ''"
         @click="tagsFun(index)"
       >{{item.name}}</li>
     </ul>
+    <div v-if="type == 'home'" class="changeZoon" @click="changeZoon">确认</div>
     <i @click="tagShowFun"></i>
   </div>
 </template>
@@ -16,11 +22,14 @@
 <script>
 import XHR from "@/api";
 export default {
-  props: ["tag"],
+  props: ["tag", "type"],
   data() {
     return {
       tags: [],
-      tagObj: {}
+      tagObj: {},
+      activeSelected: -2,
+      nextSelected: -2,
+      homeTag: {}
     };
   },
   mounted() {
@@ -32,12 +41,27 @@ export default {
     }
   },
   methods: {
+    activeAll() {
+      this.homeTag = { name: "全部", valueId: "" };
+      this.activeSelected = -1;
+      if (this.nextSelected > -1) {
+        this.tags[this.nextSelected].selected = false;
+      }
+      this.nextSelected = this.activeSelected;
+    },
+    changeZoon() {
+      this.$emit("tagsObjFun", this.homeTag);
+      this.tagShowFun();
+    },
     // 获取摄影分类
     getTypeList() {
       XHR.getTypeList().then(res => {
         if (res.data.errno == 0) {
           let data = res.data.data;
-          let tag = this.tag.split(",");
+          let tag = [];
+          if (this.tag) {
+            tag = this.tag.split(",");
+          }
 
           data.map(item => {
             item.selected = false;
@@ -54,10 +78,24 @@ export default {
       });
     },
     tagsFun(i) {
-      this.tags[i].selected = !this.tags[i].selected;
-      this.tagObj[i] = this.tags[i];
+      if (this.type == "home") {
+        if (this.nextSelected > -1) {
+          console.log(this.nextSelected);
 
-      this.$emit("tagsObjFun", this.tagObj);
+          this.tags[this.nextSelected].selected = false;
+        }
+        this.activeSelected = i;
+        this.nextSelected = this.activeSelected;
+
+        this.tags[i].selected = true;
+        console.log(this.tags[i]);
+
+        this.homeTag = this.tags[i];
+      } else {
+        this.tags[i].selected = !this.tags[i].selected;
+        this.tagObj[i] = this.tags[i];
+        this.$emit("tagsObjFun", this.tagObj);
+      }
     },
     tagShowFun() {
       this.$emit("tagShowF", false);
@@ -135,6 +173,19 @@ export default {
         }
       }
     }
+  }
+  .changeZoon {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    width: calc(~"100% - 90px");
+    height: 45px;
+    color: #fff;
+    font-size: 14px;
+    line-height: 45px;
+    text-align: center;
+    background: rgba(63, 158, 255, 0.95);
+    z-index: 4;
   }
 }
 </style>

@@ -35,7 +35,7 @@
         <span>从业简介：</span>
         <textarea name id placeholder="输入您的简介，最多200字" maxlength="200" v-model="content"></textarea>
       </li>
-      <li>
+      <li class="show-phone">
         <span>手机号：</span>
         <input
           type="tel"
@@ -45,6 +45,7 @@
           :class="mobileShow ? 'selected' : ''"
         >
         <mt-switch v-model="mobileShow"></mt-switch>
+        <p>默认手机号显示，关闭之后其他用户将看不到你的电话信息</p>
       </li>
     </ul>
     <button class="submit" @click="submitFun($event)">提交</button>
@@ -282,6 +283,19 @@ export default {
       flex-direction: row;
       &.tag-item {
         flex-wrap: wrap;
+      }
+      &.show-phone {
+        padding-bottom: 30px;
+        p {
+          position: absolute;
+          left: 0;
+          bottom: 0;
+          width: 100%;
+          line-height: 30px;
+          font-size: 10px;
+          color: #999;
+          border-top: 1px solid #eee;
+        }
       }
       > span {
         width: 75px;

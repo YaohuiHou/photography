@@ -7,14 +7,14 @@
       <input type="password" name="password" v-model="password" placeholder="请输入密码" maxlength="16">
     </label>
     <button @click="submitFun($event)">登录</button>
-    <a href="tel:123456" class="forget">忘记密码</a>
+    <em class="forget" @click="forget">忘记密码</em>
     <span class="register" @click="$router.push('/register')">注册</span>
   </form>
 </template>
 
 <script>
 import XHR from "@/api";
-import { Toast } from "mint-ui";
+import { Toast, MessageBox } from "mint-ui";
 export default {
   data() {
     return {
@@ -26,6 +26,29 @@ export default {
     console.log(this.$router);
   },
   methods: {
+    // 忘记密码
+    forget() {
+      if (this.username == "") {
+        Toast({
+          message: "请输入正确的用户名,方便获取密码",
+          position: "top",
+          duration: 3000
+        });
+      }
+      MessageBox.confirm(
+        "为了确保您的信息安全，会由管理员通知您的正确密码，是否联系管理员?"
+      ).then(action => {
+        if (action == "confirm") {
+          XHR.getPassword({
+            username: this.username
+          }).then(res => {
+            if (res.data.errno == 0) {
+              window.open("tel:17710096910");
+            }
+          });
+        }
+      });
+    },
     submitFun(e) {
       e.preventDefault();
       if (this.password == "" || this.username == "") {

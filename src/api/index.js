@@ -1,7 +1,7 @@
 import fetch from './ajax'
 
-export const DEBUG = false // 是否开发模式
-const HTTP_DEV = 'http://localhost:8080/wx/' // 开发模式
+export const DEBUG = true // 是否开发模式
+const HTTP_DEV = 'http://localhost:8082/wx/' // 开发模式
 const HTTP = 'https://www.goodwell.top/wx/' // 正式地址
 
 
@@ -167,6 +167,14 @@ class XHR {
   getmyComment(json) {
     return fetch({
       url: `${URLS}comment/mylist`,
+      body: json,
+      type: 'GET'
+    })
+  }
+
+  getPassword(json) {
+    return fetch({
+      url: `${URLS}auth/forget`,
       body: json,
       type: 'GET'
     })

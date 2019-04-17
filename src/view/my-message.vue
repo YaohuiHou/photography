@@ -77,9 +77,6 @@ export default {
   width: 100%;
   overflow: hidden;
   .list {
-    display: flex;
-    flex-direction: row;
-    transition: all 0.6s;
     padding-top: 45px;
     .list1 {
       width: 100%;

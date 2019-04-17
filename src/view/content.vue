@@ -27,7 +27,7 @@ export default {
     return {
       infoHeadImg: "",
       infoName: "",
-      logout: true,
+      logout: false,
       routes: [
         {
           name: "我的作品",
@@ -58,6 +58,7 @@ export default {
         if (res.data.errno == 0) {
           this.infoHeadImg = res.data.data.info.avatar;
           this.infoName = res.data.data.info.username;
+          this.logout = true;
         } else {
           this.logout = false;
         }

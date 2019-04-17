@@ -12,6 +12,7 @@
           class="zone"
         >{{dataInfo.info.provinceName}}-{{dataInfo.info.cityName}}-{{dataInfo.info.areaName}}</span>
       </div>
+      <a class="tel" :href="'tel:'+dataInfo.info.mobile" v-if="dataInfo.info.mobileShow">话</a>
     </div>
     <ul class="taps">
       <li v-for="(item,index) in tagsObj" v-if="item.selected" :key="index">{{item.name}}</li>
@@ -42,7 +43,11 @@
     </div>
     <div class="my-mall" v-if="dataInfo.store">
       <h3>我的商城</h3>
-      <a :href="dataInfo.store.outUrl" class="goto">
+      <a
+        :href="dataInfo.store.outUrl.indexOf('http') == 0 ? dataInfo.store.outUrl : '//'+dataInfo.store.outUrl"
+        class="goto"
+        target="_blank"
+      >
         <img :src="dataInfo.store.picUrl" alt>
         <p>{{dataInfo.store.desc}}</p>
       </a>
@@ -64,17 +69,18 @@
             <div class="info">
               <em>{{item.fromInfo.username}}</em>
               <p>
-                <i>回复@{{item.toInfo.username}}：</i>
+                <i>@{{item.toInfo.username}}：</i>
                 {{item.content}}
               </p>
               <span>{{item.addTime}}</span>
             </div>
           </div>
+          <!-- 发出的信息 -->
           <div v-if="item.fromId == mineId">
             <div class="info">
               <em>{{item.fromInfo.username}}</em>
               <p>
-                <i>回复@{{item.toInfo.username}}：</i>
+                <i>@{{item.toInfo.username}}：</i>
                 {{item.content}}
               </p>
               <span>{{item.addTime}}</span>
@@ -85,13 +91,13 @@
           </div>
         </li>
       </ul>
-      <div class="nothing" v-else @click="gotoComment">
+      <div class="nothing" v-else @click="gotoComment(0)">
         <span>空</span>
         <em>快来留言哟~</em>
       </div>
     </div>
     <!-- 悬浮 -->
-    <span class="question" @click="gotoComment">提问</span>
+    <span class="question" @click="gotoComment(0)">提问</span>
     <transition name="fade">
       <div class="toast-view" v-show="toastShow">
         <form>
@@ -151,7 +157,6 @@ export default {
               }
             });
           });
-          console.log(this.tags, this.tagsObj);
 
           setTimeout(() => {
             let swiper = new Swiper("#works", {
@@ -219,10 +224,9 @@ export default {
       }
       if (this.userComment.disable) return;
       this.userComment.disable = true;
-      let toId = this.toId == 0 ? this.userId : this.toId;
 
       XHR.userComment({
-        toId: this.userId,
+        toId: this.toId,
         topicId: this.userId,
         content: this.textContent
       }).then(res => {
@@ -242,7 +246,8 @@ export default {
     gotoComment(toId) {
       if (localStorage.getItem("UserTokenHas")) {
         this.toastShow = true;
-        this.toId = toId ? toId : 0;
+        this.toId = toId == 0 ? this.userId : toId;
+        console.log(this.toId);
       } else {
         MessageBox.confirm("您需要先登录?").then(action => {
           if (action == "confirm") {
@@ -266,6 +271,7 @@ export default {
     padding: 20px;
     box-sizing: border-box;
     align-items: center;
+    position: relative;
     figure {
       width: 160px;
       height: 160px;
@@ -299,6 +305,21 @@ export default {
           color: #666;
         }
       }
+    }
+    .tel {
+      position: absolute;
+      right: 20px;
+      bottom: 20px;
+      width: 40px;
+      height: 40px;
+      line-height: 40px;
+      text-align: center;
+      font-family: "photo font";
+      color: rgba(63, 158, 255, 0.7);
+      font-size: 24px;
+      border-radius: 50%;
+      box-shadow: 0px 0px 10px 1px rgba(0, 0, 0, 0.2);
+      animation: rotate 1s linear infinite;
     }
   }
   .taps {
@@ -437,6 +458,7 @@ export default {
           height: 180px;
           z-index: 2;
           background: #eee;
+          transition: all 0.6s;
           img {
             position: absolute;
             width: 100%;
@@ -679,5 +701,18 @@ export default {
 .fade-enter,
 .fade-leave-active {
   opacity: 0;
+}
+@keyframes rotate {
+  0%,
+  50%,
+  100% {
+    transform: rotate(0);
+  }
+  25% {
+    transform: rotate(10deg);
+  }
+  75% {
+    transform: rotate(-10deg);
+  }
 }
 </style>

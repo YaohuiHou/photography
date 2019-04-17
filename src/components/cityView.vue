@@ -78,6 +78,7 @@ export default {
     // 获取城市
     getCity(index) {
       let item = this.province[index];
+      this.submitData = [];
       this.submitData[0] = item;
 
       this.activeSelected = index;

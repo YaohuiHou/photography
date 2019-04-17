@@ -12,5 +12,17 @@
   <div id="app"></div>
   <!-- built files will be auto injected -->
 </body>
+<script>
+  if (navigator.serviceWorker) {
+    navigator.serviceWorker.register('sw.min.js')
+      .then(registration => {
+        console.log('congrats. scope is: ', registration.scope);
+
+      })
+      .catch(error => {
+        console.log('sorry', error);
+      });
+  }
+</script>
 
 </html>
