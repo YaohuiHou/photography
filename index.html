@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
   <title>摄影工作者的聚集地</title>
   <script src="https://fes.qyerstatic.com/FotXcVreRAhper4F9Cn6VC7Jiz4c"></script>
+  <script src="https://www.googletagmanager.com/gtag/js?id=UA-136059685-1"></script>
 </head>
 
 <body>
@@ -13,6 +14,14 @@
   <!-- built files will be auto injected -->
 </body>
 <script>
+  window.dataLayer = window.dataLayer || [];
+
+  function gtag() {
+    dataLayer.push(arguments);
+  }
+  gtag("js", new Date());
+  gtag("config", "UA-136059685-1");
+
   if (navigator.serviceWorker) {
     navigator.serviceWorker.register('sw.1.0.1.min.js')
       .then(registration => {
