@@ -1,6 +1,6 @@
 import fetch from './ajax'
 
-export const DEBUG = false // 是否开发模式
+export const DEBUG = true // 是否开发模式
 const HTTP_DEV = 'http://localhost:8082/wx/' // 开发模式
 const HTTP = 'https://www.goodwell.top/wx/' // 正式地址
 
@@ -123,11 +123,12 @@ class XHR {
     }
     // 上传图片
   UploadImg(json) {
-      return fetch({
-        url: `${URLS}storage/upload`,
-        body: json,
-        type: ''
-      })
+      // return fetch({
+      //   url: `${URLS}storage/upload`,
+      //   body: json,
+      //   type: ''
+      // })
+      return `${URLS}storage/upload`
     }
     // 所有人物列表
   getUsersList(json) {

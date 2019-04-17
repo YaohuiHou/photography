@@ -145,7 +145,7 @@ export default {
     z-index: 1;
     box-shadow: 1px 1px 100px 4px rgba(0, 0, 0, 0.7);
     box-sizing: border-box;
-    padding: 50px 20px 0;
+    padding: 50px 20px 50px;
     li {
       border-bottom: 1px solid #eee;
       line-height: 45px;

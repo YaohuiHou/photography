@@ -13,14 +13,16 @@
           class="upimg"
           accept="image/gif, image/jpeg, image/jpg, image/png"
         >
+        <span v-if="complete < 100">{{complete}}%</span>
       </li>
     </ul>
   </div>
 </template>
 
 <script>
+import axios from "axios";
 import XHR from "@/api";
-import { MessageBox } from "mint-ui";
+import { Toast, MessageBox } from "mint-ui";
 export default {
   props: ["photos", "size"],
   data() {
@@ -28,7 +30,8 @@ export default {
       // 图片添加
       addImg: false,
       addImgUrl: "",
-      upImgShow: false
+      upImgShow: false,
+      complete: 100
     };
   },
   methods: {
@@ -61,21 +64,39 @@ export default {
       reader.onload = function(res) {
         _this.addImgUrl = this.result;
         _this.addImg = true;
-        // _this.$set('themeValues','themeImg',this.result)
+        _this.complete = 0;
       };
 
       reader.readAsDataURL(file);
       formData.append("file", file);
 
-      XHR.UploadImg(formData).then(res => {
-        // 赋值图片路径 并且创建预览
-        this.upImgShow = false;
-        console.log(res.data.data.url);
-
-        if (res.data.errno == 0) {
-          this.$emit("updataImgFun", res.data.data.url);
-        }
-      });
+      axios
+        .post(XHR.UploadImg(), formData, {
+          onUploadProgress: progressEvent => {
+            //原生获取上传进度的事件
+            if (progressEvent.lengthComputable) {
+              //属性lengthComputable主要表明总共需要完成的工作量和已经完成的工作是否可以被测量
+              //如果lengthComputable为false，就获取不到progressEvent.total和progressEvent.loaded
+              let complete =
+                ((progressEvent.loaded / progressEvent.total) * 100) | 0;
+              this.complete = complete;
+              console.log(complete);
+            }
+          }
+        })
+        .then(res => {
+          // 赋值图片路径 并且创建预览
+          this.upImgShow = false;
+          if (res.data.errno == 0) {
+            this.$emit("updataImgFun", res.data.data.url);
+          } else {
+            Toast({
+              message: res.data.errmsg,
+              position: "top",
+              duration: 3000
+            });
+          }
+        });
     }
   }
 };
@@ -106,6 +127,19 @@ export default {
         justify-content: center;
         align-items: center;
         position: relative;
+        span {
+          width: 100%;
+          height: 100%;
+          position: absolute;
+          left: 0;
+          top: 0;
+          background: rgba(0, 0, 0, 0.7);
+          color: #fff;
+          line-height: 100px;
+          text-align: center;
+          font-size: 14px;
+          z-index: 1;
+        }
         input {
           position: absolute;
           left: 0;
