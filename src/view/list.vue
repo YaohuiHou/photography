@@ -68,12 +68,6 @@ export default {
   },
   mounted() {
     this.loadMore();
-    let tags = localStorage.getItem("TAGSList");
-    if (tags) {
-      this.tags = JSON.parse(tags);
-    } else {
-      this.getTypeList();
-    }
   },
   methods: {
     selectedFun(n) {
