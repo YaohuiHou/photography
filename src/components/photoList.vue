@@ -5,17 +5,19 @@
         <em class="close" @click="closeFun(index)">&#xe61d;</em>
         <img :src="item">
       </li>
-      <li class="upload" v-show="photos.length < size">
-        <input
-          @change="addImgFun"
-          type="file"
-          name="Filedata"
-          class="upimg"
-          accept="image/gif, image/jpeg, image/jpg, image/png"
-        >
+      <li class="upload" v-show="photos.length < size" @click="uploadFileClick">
         <span v-if="complete < 100">{{complete}}%</span>
       </li>
     </ul>
+    <input
+      @change="addImgFun"
+      ref="uploadFile"
+      type="file"
+      name="Filedata"
+      class="upimg"
+      accept="image/*"
+    >
+    <!-- <input type="file" accept="image/gif, image/jpeg, image/jpg, image/png"> -->
   </div>
 </template>
 
@@ -40,6 +42,13 @@ export default {
         this.$emit("removeImg", i);
       });
     },
+    uploadFileClick() {
+      if (this.uploadFileClick.disable) return;
+      this.uploadFileClick.disable = true;
+      this.$refs.uploadFile.click();
+
+      this.uploadFileClick.disable = false;
+    },
     // 上传图片
     addImgFun(event) {
       if (this.upImgShow) return;
@@ -48,7 +57,6 @@ export default {
       var reader = new FileReader();
       var formData = new FormData();
       let _this = this;
-
       if (!file.type) {
         var regexp = fileName.match(/\.\w+$/);
         if (regexp && (regexp = regexp[0]))
@@ -104,6 +112,12 @@ export default {
 
 <style lang="less" scoped>
 .photo {
+  .upimg {
+    display: block;
+    width: 0;
+    height: 0;
+    opacity: 0;
+  }
   ul {
     display: flex;
     flex-direction: row;
@@ -139,14 +153,6 @@ export default {
           text-align: center;
           font-size: 14px;
           z-index: 1;
-        }
-        input {
-          position: absolute;
-          left: 0;
-          top: 0;
-          width: 100%;
-          height: 100%;
-          opacity: 0;
         }
         &:after {
           display: block;
