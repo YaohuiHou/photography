@@ -23,7 +23,7 @@ export default {
     };
   },
   mounted() {
-    console.log(this.$router);
+    this.$store.commit("ga", { path: "login", dt: "登录页面" });
   },
   methods: {
     // 忘记密码
@@ -68,12 +68,16 @@ export default {
         this.submitFun.disabled = false;
         if (res.data.errno == 0) {
           localStorage.setItem("UserTokenHas", res.data.data.token);
+          // this.$store.commit("isLogin", true);
+          this.$store.commit("ga", {
+            path: "loginsuccess",
+            dt: "登录成功页面"
+          });
           Toast({
             message: "登录成功",
             iconClass: "icon icon-success"
           });
           this.$router.go(-1);
-          this.$store.commit("isLogin", true);
         } else {
           Toast({
             message: res.data.errmsg,

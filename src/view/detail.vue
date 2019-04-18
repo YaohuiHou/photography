@@ -130,8 +130,6 @@ export default {
     };
   },
   mounted() {
-    this.$store.commit("isLogin", true);
-
     let tags = localStorage.getItem("TAGSList");
     if (tags) {
       this.tags = JSON.parse(tags);
@@ -142,6 +140,9 @@ export default {
     this.userId = this.$route.query.id;
     this.getDetail(this.$route.query.id);
     this.getComment();
+    this.$store.commit("isLogin", true);
+
+    this.$store.commit("ga", { path: "detail", dt: "详情页" });
   },
   methods: {
     getDetail(id) {

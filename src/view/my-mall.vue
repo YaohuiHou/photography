@@ -34,6 +34,7 @@ export default {
   },
   mounted() {
     this.getMallDetail();
+    this.$store.commit("ga", { path: "mymall", dt: "商城" });
   },
   methods: {
     getMallDetail() {
@@ -45,8 +46,8 @@ export default {
         }
       });
     },
-    updataImg(url) {
-      this.photos.push(url);
+    updataImg(list) {
+      this.photos = list;
     },
     removeImg(i) {
       this.photos.splice(i, 1);

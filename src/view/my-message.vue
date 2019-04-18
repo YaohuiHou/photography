@@ -38,6 +38,7 @@ export default {
   mounted() {
     this.$store.commit("isLogin", true);
     this.loadMore();
+    this.$store.commit("ga", { path: "mymess", dt: "留言页" });
   },
   methods: {
     gotoLink(id) {

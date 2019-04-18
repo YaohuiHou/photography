@@ -51,6 +51,8 @@ export default {
   mounted() {
     this.$store.commit("isLogin", true);
     this.getUserInfo();
+
+    this.$store.commit("ga", { path: "content", dt: "个人中心" });
   },
   methods: {
     // 获取信息
@@ -87,6 +89,7 @@ export default {
         res => {
           localStorage.removeItem("UserTokenHas");
           this.$store.commit("isLogin", false);
+          this.$store.commit("ga", { path: "outlogin", dt: "退出登录" });
           // window.location.reload();
         }
       );

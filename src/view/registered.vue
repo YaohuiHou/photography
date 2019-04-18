@@ -78,6 +78,7 @@ export default {
       }).then(res => {
         this.submitFun.disabled = false;
         if (res.data.errno == 0) {
+          this.$store.commit("ga", { path: "newuser", dt: "注册成功" });
           localStorage.setItem("UserTokenHas", res.data.data.token);
           Toast({
             message: "注册成功",

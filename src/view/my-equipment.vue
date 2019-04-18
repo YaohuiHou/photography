@@ -30,6 +30,7 @@ export default {
   },
   mounted() {
     this.getMaterial();
+    this.$store.commit("ga", { path: "equip", dt: "器材页面" });
   },
   methods: {
     getMaterial() {
@@ -40,8 +41,8 @@ export default {
         }
       });
     },
-    updataImg(url) {
-      this.photos.push(url);
+    updataImg(list) {
+      this.photos = list;
     },
     removeImg(i) {
       this.photos.splice(i, 1);

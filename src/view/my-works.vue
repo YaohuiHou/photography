@@ -24,6 +24,7 @@ export default {
   },
   mounted() {
     this.getMyWorks();
+    this.$store.commit("ga", { path: "mywork", dt: "作品页面" });
   },
   methods: {
     getMyWorks() {
@@ -33,8 +34,8 @@ export default {
         }
       });
     },
-    updataImg(url) {
-      this.photos.push(url);
+    updataImg(list) {
+      this.photos = list;
     },
     removeImg(i) {
       console.log(i);

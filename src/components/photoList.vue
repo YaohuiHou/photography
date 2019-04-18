@@ -4,10 +4,9 @@
       <li v-for="(item,index) in photos" :key="index">
         <em class="close" @click="closeFun(index)">&#xe61d;</em>
         <img :src="item">
+        <span v-if="item.length > 100">{{complete}}%</span>
       </li>
-      <li class="upload" v-show="photos.length < size" @click="uploadFileClick">
-        <span v-if="complete < 100">{{complete}}%</span>
-      </li>
+      <li class="upload" v-show="photos.length < size" @click="uploadFileClick"></li>
     </ul>
     <input
       @change="addImgFun"
@@ -17,7 +16,6 @@
       class="upimg"
       accept="image/*"
     >
-    <!-- <input type="file" accept="image/gif, image/jpeg, image/jpg, image/png"> -->
   </div>
 </template>
 
@@ -33,7 +31,7 @@ export default {
       addImg: false,
       addImgUrl: "",
       upImgShow: false,
-      complete: 100
+      complete: 0
     };
   },
   methods: {
@@ -69,15 +67,20 @@ export default {
         return;
       }
       // 生成base64
+      let photosList = [...this.photos];
+
       reader.onload = function(res) {
-        _this.addImgUrl = this.result;
-        _this.addImg = true;
+        photosList.push(this.result);
         _this.complete = 0;
+        _this.$emit("updataImgFun", photosList);
       };
 
       reader.readAsDataURL(file);
       formData.append("file", file);
 
+      this.upImgFun(formData, this.photos);
+    },
+    upImgFun(formData, arr) {
       axios
         .post(XHR.UploadImg(), formData, {
           onUploadProgress: progressEvent => {
@@ -87,8 +90,8 @@ export default {
               //如果lengthComputable为false，就获取不到progressEvent.total和progressEvent.loaded
               let complete =
                 ((progressEvent.loaded / progressEvent.total) * 100) | 0;
+
               this.complete = complete;
-              console.log(complete);
             }
           }
         })
@@ -96,7 +99,9 @@ export default {
           // 赋值图片路径 并且创建预览
           this.upImgShow = false;
           if (res.data.errno == 0) {
-            this.$emit("updataImgFun", res.data.data.url);
+            let photosList = [...arr, res.data.data.url];
+            this.$emit("updataImgFun", photosList);
+            this.complete = 100;
           } else {
             Toast({
               message: res.data.errmsg,
@@ -134,6 +139,19 @@ export default {
       -webkit-box-direction: normal;
       margin-right: 10px;
       margin-bottom: 14px;
+      span {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        left: 0;
+        top: 0;
+        background: rgba(0, 0, 0, 0.7);
+        color: #fff;
+        line-height: 100px;
+        text-align: center;
+        font-size: 14px;
+        z-index: 1;
+      }
       &:nth-of-type(3n) {
         margin-right: 0;
       }
@@ -141,19 +159,6 @@ export default {
         justify-content: center;
         align-items: center;
         position: relative;
-        span {
-          width: 100%;
-          height: 100%;
-          position: absolute;
-          left: 0;
-          top: 0;
-          background: rgba(0, 0, 0, 0.7);
-          color: #fff;
-          line-height: 100px;
-          text-align: center;
-          font-size: 14px;
-          z-index: 1;
-        }
         &:after {
           display: block;
           content: "\52a0";

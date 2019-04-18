@@ -68,6 +68,7 @@ export default {
   },
   mounted() {
     this.loadMore();
+    this.$store.commit("ga", { path: "", dt: "首页" });
   },
   methods: {
     selectedFun(n) {
@@ -80,11 +81,13 @@ export default {
           // 租赁
           this.selected2 = !this.selected2;
           this.formData.isMaterial = this.selected2 ? 1 : 0;
+          this.page = 1;
           break;
         case 2:
           // 商城
           this.selected3 = !this.selected3;
           this.formData.isStore = this.selected3 ? 1 : 0;
+          this.page = 1;
           break;
         case 3:
           // 商城
@@ -95,10 +98,10 @@ export default {
     },
     // 加载列表
     loadMore() {
-      console.log("-------");
-
       // 判斷
-      if (this.list.length >= this.total) return;
+      if (this.page > 1) {
+        if (this.list.length >= this.total) return;
+      }
 
       if (this.loadMore.disable) return;
       this.loadMore.disable = true;
