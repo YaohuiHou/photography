@@ -4,7 +4,7 @@
     <div class="list">
       <div class="list1">
         <ul
-          v-infinite-scroll="getComment"
+          v-infinite-scroll="loadMore"
           infinite-scroll-disabled="loading"
           infinite-scroll-distance="10"
         >
@@ -37,24 +37,23 @@ export default {
   },
   mounted() {
     this.$store.commit("isLogin", true);
-    this.getComment();
+    this.loadMore();
   },
   methods: {
     gotoLink(id) {
       this.$router.push({ path: "/detail", query: { id: id } });
     },
     // 获取留言列表
-    getComment() {
-      if (this.page > 1) {
-        if (this.page * 10 >= this.total) return;
-      }
-      if (this.getComment.disable) return;
-      this.getComment.disable = true;
+    loadMore() {
+      if (this.messages.length >= this.total) return;
+
+      if (this.loadMore.disable) return;
+      this.loadMore.disable = true;
       XHR.getComment({
-        page: 1,
+        page: this.page,
         limit: 10
       }).then(res => {
-        this.getComment.disable = false;
+        this.loadMore.disable = false;
         if (res.data.errno == 0) {
           if (this.page == 1) {
             this.messages = res.data.data.data;
@@ -62,7 +61,7 @@ export default {
             this.messages = [...this.messages, ...res.data.data.data];
           }
 
-          this.total = res.data.data.total;
+          this.total = res.data.data.count;
           this.page += 1;
         }
       });
@@ -79,9 +78,6 @@ export default {
   .list {
     padding-top: 45px;
     .list1 {
-      width: 100%;
-      overflow-x: hidden;
-      overflow-y: auto;
     }
     ul {
       width: 100%;

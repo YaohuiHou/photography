@@ -1,17 +1,17 @@
 <template>
   <div class="content-view">
-    <header @click="$router.push('/myinfo')" v-show="logout">
+    <header @click="$router.push('/myinfo')" v-show="$store.state.isLogin">
       <figure>
         <img :src="infoHeadImg" alt>
       </figure>
       <span>{{infoName}}</span>
     </header>
-    <header class="header" v-show="!logout" @click="$router.push('/login')">
+    <header class="header" v-show="!$store.state.isLogin" @click="$router.push('/login')">
       <mt-button type="primary" size="small">登录</mt-button>
     </header>
     <ul class="routes">
       <li v-for="(item,index) in routes" @click="outLink(index)" :key="index">{{item.name}}</li>
-      <li @click="outLogin" v-show="logout">退出</li>
+      <li @click="outLogin" v-show="$store.state.isLogin">退出</li>
     </ul>
     <footerView :selected="'mine'"></footerView>
   </div>
@@ -49,11 +49,17 @@ export default {
     };
   },
   mounted() {
+    this.$store.commit("isLogin", true);
     this.getUserInfo();
   },
   methods: {
     // 获取信息
     getUserInfo() {
+      if (this.$store.state.isLogin) {
+        this.infoHeadImg = this.$store.state.userInfo.avatar;
+        this.infoName = this.$store.state.userInfo.username;
+        return;
+      }
       XHR.getUserInfo().then(res => {
         if (res.data.errno == 0) {
           this.infoHeadImg = res.data.data.info.avatar;
@@ -81,7 +87,7 @@ export default {
         res => {
           localStorage.removeItem("UserTokenHas");
           this.$store.commit("isLogin", false);
-          window.location.reload();
+          // window.location.reload();
         }
       );
     }

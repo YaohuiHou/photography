@@ -2,10 +2,10 @@
   <div class="equipment">
     <headView fixed="1" title="我的租赁信息"></headView>
     <h2>我的器材：</h2>
-    <p>作品集合是体现自己摄影技术的表现，最多只能上传6张美图。</p>
+    <p>上传自己的器材照片，方便其他有意向用户查看，最多只能上传6张美图。</p>
     <photoList :photos="photos" :size="6" @updataImgFun="updataImg" @removeImg="removeImg"></photoList>
     <h2>简介：</h2>
-    <p>作品集合是体现自己摄影技术的表现。最多200字</p>
+    <p>可以描述自己的器材简介，包括产品的信息，使用年限，有无损坏，方便他人全面了解。最多200字</p>
     <div class="textarea">
       <textarea placeholder="请输入对器材的评价与介绍" v-model="content" maxlength="200"></textarea>
     </div>

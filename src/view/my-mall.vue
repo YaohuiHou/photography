@@ -2,13 +2,13 @@
   <div class="my-mall">
     <headView fixed="1" title="我的商城信息"></headView>
     <h2>我的商城：</h2>
-    <p>作品集合是体现自己摄影技术的表现，最多只能上传1张美图。</p>
+    <p>我的商城信息页是展示我个人商城信息，这里是商城首页的展示图，最多只能上传1张美图。</p>
     <photoList :photos="photos" :size="1" @updataImgFun="updataImg" @removeImg="removeImg"></photoList>
     <h2>链接：</h2>
-    <p>作品集合是体现自己摄影技术的表现。最多200字</p>
-    <input class="link" type="text" v-model="linkUrl" placeholder="请输入商城链接">
+    <p>本网站支持跳转到京东、淘宝等各大网站页面，请输入正确网站地址</p>
+    <input class="link" type="text" maxlength="100" v-model="linkUrl" placeholder="请输入商城链接">
     <h2>简介：</h2>
-    <p>作品集合是体现自己摄影技术的表现。最多200字</p>
+    <p>可以对自己的商城进行详细描述，方便他人了解您的商城信息。</p>
     <div class="textarea">
       <textarea placeholder="请输入对商城的评价与介绍" v-model="content" maxlength="200"></textarea>
     </div>

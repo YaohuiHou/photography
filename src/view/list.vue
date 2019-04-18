@@ -95,10 +95,11 @@ export default {
     },
     // 加载列表
     loadMore() {
+      console.log("-------");
+
       // 判斷
-      if (this.page > 1) {
-        if (this.page * 10 >= this.total) return;
-      }
+      if (this.list.length >= this.total) return;
+
       if (this.loadMore.disable) return;
       this.loadMore.disable = true;
       // {

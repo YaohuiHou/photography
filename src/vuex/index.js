@@ -14,6 +14,7 @@ const store = new Vuex.Store({
     // store.commit('isLogin', 10)
     isLogin(state, type) {
       if (type) {
+        if (state.isLogin) return
         XHR.getUserAllInfo().then(res => {
           if (res.data.errno == 0) {
             let data = res.data.data;
@@ -26,6 +27,7 @@ const store = new Vuex.Store({
         })
       } else {
         state.userInfo = {}
+        state.isLogin = false;
       }
     },
     gotoLogin(state) {

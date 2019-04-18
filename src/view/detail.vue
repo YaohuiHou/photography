@@ -1,6 +1,6 @@
 <template>
   <div class="detail" v-show="dataInfo">
-    <headView fixed title="详情页"></headView>
+    <headView fixed="1" title="详情页"></headView>
     <div class="header" v-if="dataInfo.info">
       <figure>
         <img :src="dataInfo.info.avatar" alt>
@@ -262,6 +262,7 @@ export default {
 
 <style lang="less">
 .detail {
+  padding-top: 45px;
   .header {
     height: 200px;
     border-radius: 0 0 8px 8px;
