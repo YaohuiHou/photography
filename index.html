@@ -24,14 +24,11 @@
   gtag('config', 'UA-138563770-1');
 
   if (navigator.serviceWorker) {
-    navigator.serviceWorker.register('sw.1.0.2.min.js')
-      .then(registration => {
-        console.log('congrats. scope is: ', registration.scope);
-
-      })
-      .catch(error => {
-        console.log('sorry', error);
-      });
+    try {
+      navigator.serviceWorker.register('sw.1.0.2.min.js')
+    } catch (err) {
+      console.log('sorry', error);
+    }
   }
 </script>
 
