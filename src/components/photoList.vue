@@ -99,7 +99,7 @@ export default {
           // 赋值图片路径 并且创建预览
           this.upImgShow = false;
           if (res.data.errno == 0) {
-            let photosList = [...arr, res.data.data.url];
+            let photosList = [...arr, res.data.data.thumbnailUrl];
             this.$emit("updataImgFun", photosList);
             this.complete = 100;
           } else {

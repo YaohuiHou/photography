@@ -223,7 +223,7 @@ export default {
           // 赋值图片路径 并且创建预览
           this.upImgShow = false;
           if (res.data.errno == 0) {
-            this.avatar = res.data.data.url;
+            this.avatar = res.data.data.originalUrl;
             this.complete = 100;
           } else {
             Toast({
