@@ -89,6 +89,13 @@ export default {
             position: "bottom",
             duration: 3000
           });
+          this.$router.go(-1);
+        } else {
+          Toast({
+            message: "网络有问题，请稍后再试！",
+            position: "bottom",
+            duration: 3000
+          });
         }
       });
     }

@@ -167,6 +167,13 @@ export default {
             message: "修改成功",
             iconClass: "icon icon-success"
           });
+          this.$router.go(-1);
+        } else {
+          Toast({
+            message: "网络有问题，请稍后再试！",
+            position: "bottom",
+            duration: 3000
+          });
         }
       });
     },

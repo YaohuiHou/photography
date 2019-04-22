@@ -1,9 +1,9 @@
 <template>
   <div class="item" @click="gotoLink(useritem.id)">
-    <img class="bg" :src="useritem.collection ? useritem.collection : collection">
+    <img class="bg" v-lazy="useritem.collection ? useritem.collection : collection">
     <header>
       <figure>
-        <img :src="useritem.avatar" alt>
+        <img v-lazy="useritem.avatar" alt>
       </figure>
       <div class="info">
         <span>{{useritem.username}}</span>
@@ -26,7 +26,7 @@
 
 <script>
 export default {
-  props: ["useritem"],
+  props: ["useritem", "list", "page", "formData"],
   data() {
     return {
       collection: "//fes.qyerstatic.com/FsgWAf3-MV_UmCNga0GS7Q_TXEiM?imageslim"
@@ -34,6 +34,8 @@ export default {
   },
   methods: {
     gotoLink(id) {
+      // 保留当前页面数据
+      let height = window.scrollY;
       this.$router.push({ path: "/detail", query: { id: id } });
     }
   }

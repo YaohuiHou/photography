@@ -7,7 +7,24 @@ Vue.use(Vuex)
 const store = new Vuex.Store({
   state: {
     isLogin: false,
-    userInfo: {}
+    userInfo: {},
+    home: {
+      tagsObj: {},
+      tagShow: false,
+      tagName: "",
+      zoons: "",
+      cityShow: false,
+      page: 1,
+      total: 10,
+      selected1: false,
+      selected2: false,
+      selected3: false,
+      selected4: false,
+      list: [],
+      formData: {
+        page: 1
+      }
+    }
   },
   // 事件
   mutations: {
@@ -48,8 +65,7 @@ const store = new Vuex.Store({
   },
   actions: {
     isLogin(context) {
-      // context.commit('isLogin')
-      console.log(123);
+      context.commit('isLogin', type)
     }
   }
 })

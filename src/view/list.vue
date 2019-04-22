@@ -19,6 +19,7 @@
       infinite-scroll-distance="10"
     >
       <listItem v-for="(item,index) in list" :key="index" :useritem="item"></listItem>
+      <p v-show="total > list.length">正在加载中...</p>
     </div>
     <div class="nothing" v-show="list.length <= 0">
       <span>零</span>
@@ -41,6 +42,7 @@
 
 <script>
 import XHR from "@/api";
+import { mapActions } from "vuex";
 import listItem from "../components/listItem.vue";
 import cityView from "../components/cityView.vue";
 import footerView from "../components/footerView.vue";
@@ -82,15 +84,17 @@ export default {
           this.selected2 = !this.selected2;
           this.formData.isMaterial = this.selected2 ? 1 : 0;
           this.page = 1;
+          this.list = [];
           break;
         case 2:
           // 商城
           this.selected3 = !this.selected3;
           this.formData.isStore = this.selected3 ? 1 : 0;
           this.page = 1;
+          this.list = [];
           break;
         case 3:
-          // 商城
+          // 标签
           this.tagShow = !this.tagShow;
           break;
       }
@@ -142,6 +146,7 @@ export default {
       this.tagName = o.name;
       this.selected4 = true;
       this.page = 1;
+      this.list = [];
 
       this.loadMore();
     },
@@ -162,7 +167,7 @@ export default {
       });
       this.zoons = zoons.join("-");
       this.selected1 = !this.selected1;
-      console.log(this.formData);
+      this.list = [];
 
       this.loadMore();
     }
@@ -213,6 +218,15 @@ export default {
           transform: translate3d(10px, 14px, 0) rotate(45deg);
         }
       }
+    }
+  }
+  .list {
+    > p {
+      line-height: 40px;
+      text-align: center;
+      font-size: 14px;
+      color: #999;
+      margin-bottom: 10px;
     }
   }
 }

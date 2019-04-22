@@ -1,6 +1,23 @@
 <template>
   <div class="detail" v-show="dataInfo">
     <headView fixed="1" title="详情页"></headView>
+    <transition name="opacity">
+      <div class="load" v-if="loading">
+        <div class="load-header">
+          <div class="load-figure"></div>
+          <div class="load-info">
+            <span class="load-name"></span>
+            <span class="load-city"></span>
+          </div>
+        </div>
+        <ul class="load-tags">
+          <li></li>
+          <li></li>
+          <li></li>
+        </ul>
+        <p class="load-content"></p>
+      </div>
+    </transition>
     <div class="header" v-if="dataInfo.info">
       <figure>
         <img :src="dataInfo.info.avatar" alt>
@@ -114,10 +131,12 @@
 import XHR from "@/api";
 import { Toast, MessageBox } from "mint-ui";
 import headView from "../components/headView.vue";
+import { clearInterval } from "timers";
 export default {
   components: { headView },
   data() {
     return {
+      loading: true,
       toId: 0,
       mineId: 0,
       userId: "",
@@ -130,6 +149,7 @@ export default {
     };
   },
   mounted() {
+    this.swiperFun();
     let tags = localStorage.getItem("TAGSList");
     if (tags) {
       this.tags = JSON.parse(tags);
@@ -145,9 +165,31 @@ export default {
     this.$store.commit("ga", { path: "detail", dt: "详情页" });
   },
   methods: {
+    swiperFun() {
+      if (!this.isInclude("swiper.min.js")) {
+        var script = document.createElement("script"); //1、创建元素
+        script.src = "./static/swiper.min.js";
+        var body = document.querySelector("body"); //2、找到父级元素
+        body.appendChild(script);
+        console.log("添加");
+      }
+    },
+    isInclude(name) {
+      var js = /js$/i.test(name);
+      var es = document.querySelectorAll("script");
+      es.forEach(item => {
+        item.getAttur;
+      });
+      for (var i = 0; i < es.length; i++) {
+        if (es[i][js ? "src" : "href"].indexOf(name) != -1) return true;
+      }
+
+      return false;
+    },
     getDetail(id) {
       XHR.getUsersDefile({ otherUser: id }).then(res => {
         if (res.data.errno == 0) {
+          this.loading = false;
           this.dataInfo = res.data.data;
           let tag = res.data.data.info.tag;
           tag.split(",").forEach(ele => {
@@ -158,21 +200,28 @@ export default {
               }
             });
           });
-
-          setTimeout(() => {
-            let swiper = new Swiper("#works", {
-              speed: 300,
-              pagination: "#pagination1",
-              paginationElement: "span"
-            });
-            let swiper2 = new Swiper("#equipment", {
-              speed: 500,
-              spaceBetween: 6,
-              loop: true
-            });
-            // swiper2.slideTo(1, 300, false);
-          }, 400);
+          if (this.isInclude("./static/swiper.min.js")) {
+            setTimeout(() => {
+              this.newSwiper();
+            }, 400);
+          } else {
+            setTimeout(() => {
+              this.newSwiper();
+            }, 1000);
+          }
         }
+      });
+    },
+    newSwiper() {
+      let swiper = new Swiper("#works", {
+        speed: 300,
+        pagination: "#pagination1",
+        paginationElement: "span"
+      });
+      let swiper2 = new Swiper("#equipment", {
+        speed: 500,
+        spaceBetween: 6,
+        loop: true
       });
     },
     // 获取摄影分类
@@ -264,6 +313,78 @@ export default {
 <style lang="less">
 .detail {
   padding-top: 45px;
+  .load {
+    position: fixed;
+    left: 0;
+    top: 45px;
+    width: 100%;
+    height: calc(~"100vh - 45px");
+    background: #f3f4f5;
+    z-index: 8;
+    .load-header {
+      height: 200px;
+      border-radius: 0 0 8px 8px;
+      box-shadow: 0px 0px 10px 1px #999;
+      display: flex;
+      flex-direction: row;
+      padding: 20px;
+      box-sizing: border-box;
+      align-items: center;
+      position: relative;
+      .load-figure {
+        width: 160px;
+        height: 160px;
+        border-radius: 6px;
+        box-shadow: 0px 0px 10px 1px #999;
+        overflow: hidden;
+        background: #eee;
+        flex-shrink: 0;
+        opacity: 0.2;
+      }
+      .load-info {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        align-items: flex-end;
+        span {
+          display: block;
+          height: 28px;
+          font-size: 24px;
+          margin-bottom: 10px;
+          background: #999;
+          opacity: 0.1;
+          &.load-name {
+            width: 72px;
+          }
+          &.load-city {
+            width: 180px;
+          }
+        }
+      }
+    }
+    .load-tags {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      padding: 20px 20px;
+      li {
+        margin-right: 10px;
+        width: 66px;
+        height: 28px;
+        background: #999;
+        opacity: 0.1;
+        border-radius: 4px;
+      }
+    }
+    .load-content {
+      background: rgba(255, 255, 255, 1);
+      box-shadow: 0px 0px 10px 1px rgba(255, 255, 255, 0.9);
+      border-radius: 8px;
+      margin: 20px 20px;
+      height: 180px;
+    }
+  }
   .header {
     height: 200px;
     border-radius: 0 0 8px 8px;
@@ -291,10 +412,17 @@ export default {
     }
     .info {
       width: 100%;
+      padding-left: 10px;
+      box-sizing: border-box;
+      overflow: hidden;
       span {
         display: block;
+        width: 100%;
         text-align: right;
         color: #333;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
         &.name {
           font-weight: bold;
           line-height: 28px;
@@ -702,6 +830,15 @@ export default {
 }
 .fade-enter,
 .fade-leave-active {
+  opacity: 0;
+}
+
+.opacity-enter-active,
+.opacity-leave-active {
+  transition: opacity 0.2s;
+}
+.opacity-enter,
+.opacity-leave-active {
   opacity: 0;
 }
 @keyframes rotate {
