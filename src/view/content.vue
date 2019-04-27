@@ -44,6 +44,10 @@ export default {
         {
           name: "我的商城",
           link: "/mymall"
+        },
+        {
+          name: "联系客服",
+          link: "/detail?id=33"
         }
       ]
     };
@@ -73,6 +77,15 @@ export default {
       });
     },
     outLink(index) {
+      if (index == 4) {
+        Toast({
+          message: "有任何问题您可以留言或者直接拨打电话联系我！",
+          position: "center",
+          duration: 4000
+        });
+        this.$router.push(this.routes[index].link);
+        return;
+      }
       if (localStorage.getItem("UserTokenHas")) {
         this.$router.push(this.routes[index].link);
       } else {

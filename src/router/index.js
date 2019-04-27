@@ -10,6 +10,7 @@ import equipmentView from '@/view/my-equipment'
 import mymallView from '@/view/my-mall'
 import mymessage from '@/view/my-message'
 import detail from '@/view/detail'
+import material from '@/view/material'
 
 
 Vue.use(Router)
@@ -65,6 +66,11 @@ export default new Router({
       name: 'detail',
       component: detail,
       query: {}
+    },
+    {
+      path: '/material',
+      name: 'material',
+      component: material
     }
   ]
 })

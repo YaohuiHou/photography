@@ -4,6 +4,10 @@
       <i slot="icon" class="hall">厅</i>
       大厅
     </span>
+    <span @click="gotoLink('/material')" :class="selected == 'data' ? 'selected' : ''">
+      <i slot="icon" class="data">资</i>
+      摄影圈
+    </span>
     <span @click="gotoLink('/content')" :class="selected == 'mine' ? 'selected' : ''">
       <i slot="icon" class="mine">人</i>
       我的

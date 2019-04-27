@@ -17,6 +17,7 @@
   <div id="app"></div>
   <!-- built files will be auto injected -->
 </body>
+<script src="//api.map.baidu.com/api?v=2.0&ak=GH0iTrbO3Omjq3GflpQBVaccPmSeEWnM&callback=initialize"></script>
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=UA-138563770-1"></script>
 <script>
@@ -35,6 +36,19 @@
       console.log('sorry', error);
     }
   }
+</script>
+<script>
+  (function() {
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+      bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    } else {
+      bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+  })();
 </script>
 
 </html>

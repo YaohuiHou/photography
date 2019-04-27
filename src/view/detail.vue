@@ -1,6 +1,6 @@
 <template>
   <div class="detail" v-show="dataInfo">
-    <headView fixed="1" title="详情页"></headView>
+    <headView fixed="1" title="详情页" rotate="/"></headView>
     <transition name="opacity">
       <div class="load" v-if="loading">
         <div class="load-header">
@@ -57,6 +57,13 @@
           </div>
         </div>
       </div>
+    </div>
+    <div class="container" v-show="dataInfo.material">
+      <!-- <label for="map" class="map">
+        <input type="text" maxlength="40" placeholder="请输入您要搜索的地址" id="map" v-model="mapValue">
+        <span @click="soMap">搜索</span>
+      </label>-->
+      <div id="container"></div>
     </div>
     <div class="my-mall" v-if="dataInfo.store">
       <h3>我的商城</h3>
@@ -145,7 +152,10 @@ export default {
       tagsObj: {},
       toastShow: false,
       dataInfo: {},
-      messages: []
+      messages: [],
+      mapValue: "",
+      local: null,
+      map: null
     };
   },
   mounted() {
@@ -175,16 +185,48 @@ export default {
       }
     },
     isInclude(name) {
-      var js = /js$/i.test(name);
       var es = document.querySelectorAll("script");
       es.forEach(item => {
         item.getAttur;
       });
       for (var i = 0; i < es.length; i++) {
-        if (es[i][js ? "src" : "href"].indexOf(name) != -1) return true;
+        if (es[i]["src"].indexOf(name) != -1) return true;
       }
 
       return false;
+    },
+    // soMap() {
+    //   if (this.mapValue == "") {
+    //     Toast({
+    //       message: "搜索地址不能为空",
+    //       position: "top",
+    //       duration: 3000
+    //     });
+    //   } else {
+    //     console.log(this.mapValue);
+
+    //     this.local.search(this.mapValue); // 创建标注
+    //     this.map.addOverlay(this.local);
+    //   }
+    // },
+    // 地图
+    myMap() {
+      let map = new BMap.Map("container");
+      map.centerAndZoom(new BMap.Point(116.404, 39.915), 11);
+      let local = new BMap.LocalSearch(map, {
+        renderOptions: { map: map, panel: "results" }
+      });
+      local.search(
+        this.dataInfo.info.provinceName +
+          this.dataInfo.info.cityName +
+          this.dataInfo.info.areaName
+      ); // 创建标注
+      console.log(local);
+
+      map.addOverlay(local);
+      setTimeout(() => {
+        map.setZoom(14);
+      }, 500);
     },
     getDetail(id) {
       XHR.getUsersDefile({ otherUser: id }).then(res => {
@@ -203,10 +245,12 @@ export default {
           if (this.isInclude("./static/swiper.min.js")) {
             setTimeout(() => {
               this.newSwiper();
+              this.myMap();
             }, 400);
           } else {
             setTimeout(() => {
               this.newSwiper();
+              this.myMap();
             }, 1000);
           }
         }
@@ -311,6 +355,52 @@ export default {
 </script>
 
 <style lang="less">
+.container {
+  width: 100%;
+  padding: 10px 20px;
+  margin: 20px 0;
+  box-sizing: border-box;
+  position: relative;
+  background: #fff;
+  .map {
+    position: relative;
+    margin-bottom: 10px;
+    width: 100%;
+    height: 36px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    input {
+      display: block;
+      width: 100%;
+      line-height: 30px;
+      padding: 0 10px;
+      box-sizing: border-box;
+      background: #fff;
+      border-radius: 4px;
+      font-size: 14px;
+      border: 1px solid #eee;
+    }
+    span {
+      flex-shrink: 0;
+      margin-left: 20px;
+      display: block;
+      width: 60px;
+      height: 30px;
+      line-height: 30px;
+      text-align: center;
+      font-size: 14px;
+      color: #fff;
+      border-radius: 6px;
+      background: rgba(63, 158, 255, 1);
+    }
+  }
+  #container {
+    width: 100%;
+    height: 250px;
+    box-shadow: 0px 0px 10px 1px #eee;
+  }
+}
 .detail {
   padding-top: 45px;
   .load {

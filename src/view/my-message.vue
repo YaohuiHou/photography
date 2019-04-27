@@ -8,7 +8,7 @@
           infinite-scroll-disabled="loading"
           infinite-scroll-distance="10"
         >
-          <li v-for="(item,index) in messages" :key="index" @click="gotoLink(item.toId)">
+          <li v-for="(item,index) in messages" :key="index" @click="gotoLink(item)">
             <p>{{item.content}}</p>
             <span>{{item.addTime}}</span>
           </li>
@@ -41,7 +41,11 @@ export default {
     this.$store.commit("ga", { path: "mymess", dt: "留言页" });
   },
   methods: {
-    gotoLink(id) {
+    gotoLink(item) {
+      let id = item.toId;
+      if (item.fromId != this.$store.state.userInfo.id) {
+        id = item.fromId;
+      }
       this.$router.push({ path: "/detail", query: { id: id } });
     },
     // 获取留言列表

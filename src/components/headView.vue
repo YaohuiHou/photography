@@ -7,9 +7,13 @@
 
 <script>
 export default {
-  props: ["fixed", "title"],
+  props: ["fixed", "title", "rotate"],
   methods: {
     goback() {
+      if (this.rotate) {
+        this.$router.push(this.rotate);
+        return;
+      }
       this.$router.go(-1);
     }
   }
