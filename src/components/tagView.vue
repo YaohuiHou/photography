@@ -10,7 +10,7 @@
       <li
         v-for="(item,index) in tags"
         :key="index"
-        :class="item.selected ? 'selected' : ''"
+        :class="tagClass(index)"
         @click="tagsFun(index)"
       >{{item.name}}</li>
     </ul>
@@ -25,12 +25,25 @@ export default {
   props: ["tag", "type"],
   data() {
     return {
+      tagsNum: 0,
       tags: [],
       tagObj: {},
       activeSelected: -2,
       nextSelected: -2,
       homeTag: {}
     };
+  },
+  watch: {
+    tagObj(arr) {
+      this.tagsNum = 0;
+      for (const key in arr) {
+        console.log(key);
+
+        if (arr[key].selected) {
+          this.tagsNum += 1;
+        }
+      }
+    }
   },
   mounted() {
     let tags = localStorage.getItem("TAGSList");
@@ -41,6 +54,19 @@ export default {
     }
   },
   methods: {
+    tagClass(i) {
+      if (this.tag) {
+        this.tag.split(",").map(e => {
+          if (this.tags[i].valueId == e) {
+            this.tags[i].selected = true;
+            // this.tagObj[i] = this.tags[i];
+            this.$set(this.tagObj, i, this.tags[i]);
+          }
+        });
+      }
+
+      return this.tags[i].selected ? "selected" : "";
+    },
     activeAll() {
       this.homeTag = { name: "全部", valueId: "" };
       this.activeSelected = -1;
@@ -80,18 +106,25 @@ export default {
     tagsFun(i) {
       if (this.type == "home") {
         if (this.nextSelected > -1) {
-          console.log(this.nextSelected);
-
           this.tags[this.nextSelected].selected = false;
         }
         this.activeSelected = i;
         this.nextSelected = this.activeSelected;
 
         this.tags[i].selected = true;
-        console.log(this.tags[i]);
 
         this.homeTag = this.tags[i];
       } else {
+        // 多选
+        if (this.tagsNum >= 3 && !this.tags[i].selected) {
+          return;
+        } else {
+          if (this.tags[i].selected) {
+            this.tagsNum -= 1;
+          } else {
+            this.tagsNum += 1;
+          }
+        }
         this.tags[i].selected = !this.tags[i].selected;
         this.tagObj[i] = this.tags[i];
         this.$emit("tagsObjFun", this.tagObj);
